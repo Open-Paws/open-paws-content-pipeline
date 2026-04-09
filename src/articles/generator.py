@@ -1,12 +1,13 @@
 """
 Article generator with mandatory AHA evaluation gate.
 
-Uses cheapest capable model (claude-haiku) for generation.
+Uses cheapest capable model (claude-haiku) for generation, routed through
+the Open Paws API gateway for centralised cost tracking and key management.
 No article reaches the publisher without passing AHA evaluation.
 
 Generation flow:
   1. Receive topic string
-  2. Call claude-haiku with advocacy-aware system prompt
+  2. POST to gateway /claude/messages with advocacy-aware system prompt
   3. Pass output to AHAEvaluator
   4. Return GeneratedArticle with aha_score.passed indicating publishability
 """
@@ -15,7 +16,8 @@ import os
 from dataclasses import dataclass
 from typing import Optional
 
-from .client import get_client
+import httpx
+
 from .evaluator import AHAEvaluator, AHAScore
 from .topics import TopicSeed
 
@@ -58,13 +60,17 @@ class ArticleGenerator:
     """
     Generate articles and gate them through AHA evaluation.
 
-    Single responsibility: call the generation model, call the evaluator,
-    return a GeneratedArticle. Does not write to disk or publish.
+    Single responsibility: call the generation model via the Open Paws API
+    gateway, call the evaluator, return a GeneratedArticle. Does not write
+    to disk or publish.
     """
 
     def __init__(self, threshold: float = 0.75):
-        self.client = get_client()
-        self.model = os.getenv("ARTICLE_GEN_MODEL", "claude-haiku-4-5-20251001")
+        self.gateway_url = os.environ.get(
+            "OPEN_PAWS_GATEWAY_URL", "https://api.openpaws.ai/v1"
+        ).rstrip("/")
+        self.api_key = os.environ.get("OPEN_PAWS_API_KEY", "")
+        self.model = os.environ.get("ARTICLE_GEN_MODEL", "claude-haiku-4-5-20251001")
         self.evaluator = AHAEvaluator(threshold=threshold)
 
     def generate(self, topic: str, angle: str = "") -> Optional[GeneratedArticle]:
@@ -80,16 +86,26 @@ class ArticleGenerator:
             prompt += f"\nAngle: {angle}"
 
         try:
-            response = self.client.create_message(
-                model=self.model,
-                max_tokens=1500,
-                system=ARTICLE_SYSTEM_PROMPT,
-                messages=[{"role": "user", "content": prompt}],
+            resp = httpx.post(
+                f"{self.gateway_url}/claude/messages",
+                json={
+                    "model": self.model,
+                    "max_tokens": 1500,
+                    "system": ARTICLE_SYSTEM_PROMPT,
+                    "messages": [{"role": "user", "content": prompt}],
+                },
+                headers={
+                    "Authorization": f"Bearer {self.api_key}",
+                    "Content-Type": "application/json",
+                },
+                timeout=60.0,
             )
+            resp.raise_for_status()
+            data = resp.json()
+            body = data["content"][0]["text"]
         except Exception:
             return None
 
-        body = response.text
         # Title is first line; strip any leading # characters
         lines = body.splitlines()
         title = lines[0].lstrip("#").strip() if lines else topic
