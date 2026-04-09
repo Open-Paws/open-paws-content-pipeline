@@ -58,6 +58,8 @@ Items below threshold go to review queue, never auto-publish.
 
 Fail-safe: evaluation errors return a failing score, not a passing one.
 
+**AHA MCP Server:** `mcp-server-aha-evaluation` is now LIVE (32 tests, passing). The pipeline can call the MCP server directly as the evaluation backend rather than running inline scoring. See `Open-Paws/mcp-server-aha-evaluation`.
+
 ## HuggingFace Strategy
 
 Content publishes to `open-paws/animal-welfare-training-data` on HuggingFace.
@@ -92,12 +94,14 @@ The AHA `animal_positive` score catches these automatically, but verify manually
 
 ## Open Issues (GitHub)
 
-1. Full short-form video pipeline (remotion + youtube-shorts-pipeline)
-2. Synthalingua multilingual translation for Hindi, Spanish, French, Mandarin
-3. Wire curator (Bespoke Labs) bulk inference for higher throughput
-4. Add dataclaw Claude Code conversation → dataset export
-5. Build distribution automation: schedule posts across platforms
-6. Add 15-agent campaign ad optimization (marketing repo patterns)
+1. **NAV gate — PR #7 OPEN** (Abid to review): NAV check wired between generation and AHA gate. Fail-open on service error, fail-closed on ERROR violations. 27 tests. Awaiting merge.
+2. Full short-form video pipeline (remotion + youtube-shorts-pipeline)
+3. Synthalingua multilingual translation for Hindi, Spanish, French, Mandarin
+4. Wire curator (Bespoke Labs) bulk inference for higher throughput
+5. Add dataclaw Claude Code conversation → dataset export
+6. Build distribution automation: schedule posts across platforms
+7. Add 15-agent campaign ad optimization (marketing repo patterns)
+8. Strategy submodule integration (Wave 2)
 
 ## Every Session
 
