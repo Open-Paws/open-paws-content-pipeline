@@ -1,0 +1,54 @@
+[build-system]
+requires = ["setuptools>=77.0.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "open-paws-content-pipeline"
+version = "0.1.0"
+description = "Automated content generation pipeline: training data, multilingual articles, short-form video"
+requires-python = ">=3.11"
+license = "MIT"
+readme = "README.md"
+authors = [
+    {name = "Open Paws"},
+]
+keywords = ["animal-welfare", "advocacy", "huggingface", "training-data", "synthetic-data"]
+
+dependencies = [
+    "anthropic>=0.40.0",
+    "huggingface-hub>=0.35.0",
+    "datasets>=3.0.0",
+    "pydantic>=2.0.0",
+    "pyyaml>=6.0",
+    "tqdm>=4.67.0",
+    "python-dotenv>=1.0.0",
+]
+
+[project.optional-dependencies]
+curator = [
+    "bespokelabs-curator>=0.1.0",  # Bulk inference for high-throughput runs
+]
+video = [
+    "edge-tts>=6.0.0",             # Free TTS for video scripts
+]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.24.0",
+    "ruff>=0.8.0",
+]
+
+[project.scripts]
+content-pipeline = "src.pipeline.orchestrator:_cli"
+export-dataset = "src.training_data.exporter:_cli"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W"]
+ignore = ["E501"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"

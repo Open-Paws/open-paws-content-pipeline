@@ -1,0 +1,93 @@
+# Topic seeds for Open Paws content pipeline
+# 50+ article topics organized by category
+# Used by src/articles/topics.py
+
+factory_farming:
+  - "Battery cage conditions: what egg-laying hens endure in industrial operations"
+  - "Gestation crates and the science of pig cognition and social behavior"
+  - "Broiler chicken growth rates: what selective breeding does to animal bodies"
+  - "Veal crates and the male dairy calf problem no one talks about"
+  - "Farrowing crates: why pig farmers use them and what alternatives exist"
+  - "Crowding density in industrial turkey operations and its welfare consequences"
+  - "Live-shackling and water-bath stunning: what happens before slaughter"
+  - "Beak trimming in laying hens: industry practice vs. welfare science"
+  - "Tail docking in pigs: the pain evidence regulators ignore"
+  - "Debeaking, desnooding, and detoeing: routine mutilations in poultry farming"
+  - "The 42-day broiler cycle: speed of growth, lameness, and heart failure"
+  - "Zero-grazing dairy: when cows never see a field"
+  - "Forced molting: how egg producers manipulate the laying cycle"
+  - "Spent hen disposal: what happens to laying hens after productivity declines"
+
+corporate_accountability:
+  - "Cage-free commitments: which corporations are meeting their pledges in 2026"
+  - "The welfare certification gap: what 'Certified Humane' actually requires"
+  - "How McDonald's, Walmart, and Costco track their cage-free transitions"
+  - "Corporate welfare pledges and the accountability problem"
+  - "Animal welfare auditing: who audits the auditors"
+  - "The Better Chicken Commitment: which food companies have signed and delivered"
+  - "Greenwashing in animal agriculture: how to spot misleading welfare claims"
+  - "Investor pressure and farmed animal welfare: ESG's blind spot"
+  - "Supply chain opacity in industrial animal agriculture"
+  - "Restaurant chains and farmed animal welfare scorecards"
+
+legislation:
+  - "Ag-gag laws by state: which laws are standing, which were struck down"
+  - "California Proposition 12 and the interstate commerce fight"
+  - "Massachusetts Question 3: how a ballot initiative became a supply chain battle"
+  - "EU Farm to Fork Strategy: what it means for farmed animal welfare"
+  - "The EATS Act and federal preemption of state animal welfare laws"
+  - "Florida Amendment 10 and gestation crate bans: lessons learned"
+  - "USDA inspection failures: understaffing and the audit trail"
+  - "The Humane Methods of Slaughter Act: what it covers and what it misses"
+  - "Animal welfare legislation tracker: what passed, what failed, what's pending"
+  - "State-by-state farmed animal protection map: progress since 2020"
+
+science:
+  - "Fish pain: the research that changed the science consensus"
+  - "Chicken cognition: what the last decade of research reveals"
+  - "Pig intelligence benchmarks: problem solving, social learning, empathy"
+  - "Octopus sentience and the case for cephalopod welfare protections"
+  - "The neuroscience of animal suffering: Cambridge Declaration update"
+  - "Invertebrate pain: what the evidence says about crabs and lobsters"
+  - "Cow emotional contagion: how fear spreads through a herd before slaughter"
+  - "Animal grief: documented cases of mourning across species"
+  - "Stress hormones in farmed animals: cortisol as a welfare indicator"
+  - "The sentience spectrum: how researchers now map animal consciousness"
+  - "Bird cognition and the corvid problem for speciesist ethics"
+
+alternatives:
+  - "Cultivated meat regulatory status: US, EU, Singapore compared"
+  - "Plant-based protein market: what growth rates say about the transition"
+  - "Precision fermentation and the dairy disruption"
+  - "The soy argument: does plant-based eating actually use more land"
+  - "Whole food plant-based diets and athletic performance: current evidence"
+  - "Alt-protein investment landscape: where capital is flowing in 2026"
+  - "Mycoprotein, legumes, and the protein completeness myth"
+  - "Lab-grown seafood: startups, timelines, and regulatory barriers"
+  - "The cost parity moment for cultivated meat: when and why it matters"
+
+investigations:
+  - "USDA repeat violator database: facilities cited multiple times for the same issues"
+  - "Downed animal regulations and enforcement failures"
+  - "Transport mortality rates in US farmed animal shipments"
+  - "Heat stress and cold stress deaths: underreported welfare emergencies"
+  - "Slaughterhouse line speeds and the injury-welfare tradeoff"
+  - "FOIA-obtained inspection records: what they reveal about regulatory capture"
+
+movement:
+  - "Sanctuary residents: individual stories that drive donor engagement"
+  - "Direct action acquittals: legal precedents that protect activists"
+  - "Corporate campaign wins: how advocates forced cage-free transitions"
+  - "Undercover investigation legal landscape: state-by-state risk assessment"
+  - "Coalition building across animal, environmental, and labor movements"
+  - "Youth animal advocacy: next-generation organizing strategies"
+
+health_environment:
+  - "Antibiotic resistance and industrial animal agriculture: the WHO's assessment"
+  - "Factory farm pollution: nitrogen, phosphorus, and downstream water systems"
+  - "Zoonotic disease risk: what factory farm density creates"
+  - "Greenhouse gas emissions from animal agriculture: sector breakdown"
+  - "Land use efficiency: the caloric return on animal vs. plant protein"
+  - "Factory farm communities: disproportionate health burden on rural residents"
+  - "Water use in animal agriculture: the hidden cost per calorie"
+  - "Manure lagoons and air quality: what living near a factory farm does to health"

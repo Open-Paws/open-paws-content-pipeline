@@ -1,0 +1,58 @@
+# Model routing for cost optimization
+# Target: <$100/month for 1000+ articles
+# Rule: cheapest model capable of doing the task well
+# Frontier models reserved for evaluation requiring judgment
+
+tasks:
+  article_generation:
+    model: claude-haiku-4-5-20251001
+    max_tokens: 1500
+    temperature: 0.7
+    rationale: "Structured generation from topic seed; haiku sufficient"
+
+  aha_evaluation:
+    model: claude-sonnet-4-6
+    max_tokens: 500
+    temperature: 0.1
+    rationale: "Judgment task — must catch speciesist framing and factual errors"
+
+  translation:
+    model: claude-haiku-4-5-20251001
+    max_tokens: 2000
+    temperature: 0.3
+    rationale: "Translation is well within haiku capability at lower cost"
+
+  video_script:
+    model: claude-haiku-4-5-20251001
+    max_tokens: 800
+    temperature: 0.8
+    rationale: "Short-form scripts; higher temperature for hook variation"
+
+  topic_expansion:
+    model: claude-haiku-4-5-20251001
+    max_tokens: 300
+    temperature: 0.9
+    rationale: "Angle generation; diversity requires higher temperature"
+
+  dataset_card:
+    model: claude-haiku-4-5-20251001
+    max_tokens: 800
+    temperature: 0.3
+    rationale: "Templated prose generation"
+
+targets:
+  monthly_articles: 1000
+  monthly_budget_usd: 100
+  languages: ["en", "hi", "es", "fr", "zh"]
+  aha_threshold: 0.75  # Minimum AHA composite score to auto-publish
+  aha_weights:
+    accurate: 0.35
+    helpful: 0.30
+    animal_positive: 0.35
+
+# Batch mode: enable for >100 article runs to cut costs ~50%
+# Anthropic batch API supported via bespokelabs-curator
+batch:
+  enabled: true
+  min_batch_size: 50
+  max_wait_seconds: 3600

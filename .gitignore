@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+.env
+
+# Data outputs
+data/
+output/
+
+# desloppify local state
+.desloppify/
+
+# Editor
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# API keys / secrets
+*.key
+*.pem
+config.local.yaml
