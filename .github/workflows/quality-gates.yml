@@ -23,8 +23,8 @@ jobs:
 
       - name: Install desloppify
         run: |
-          git config --global submodule.recurse false
-          pip install "desloppify[full] @ git+https://github.com/Open-Paws/desloppify.git"
+          git clone --no-recurse-submodules https://github.com/Open-Paws/desloppify.git /tmp/desloppify
+          pip install "/tmp/desloppify[full]"
 
       - name: Run desloppify scan
         run: |
