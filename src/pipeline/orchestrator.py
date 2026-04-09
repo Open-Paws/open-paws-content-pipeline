@@ -28,6 +28,27 @@ import time
 from dataclasses import dataclass
 from pathlib import Path
 
+import httpx as _httpx
+
+_NAV_MCP_URL = os.environ.get("NAV_MCP_SERVER_URL", "").rstrip("/")
+
+
+def _nav_check(text: str) -> list[str]:
+    """Return list of NAV violation messages. Empty = clean. Fails open if server unavailable."""
+    if not _NAV_MCP_URL:
+        return []
+    try:
+        resp = _httpx.post(
+            f"{_NAV_MCP_URL}/tools/check_language",
+            json={"text": text, "severities": ["ERROR"]},
+            timeout=10.0,
+        )
+        resp.raise_for_status()
+        result = resp.json()
+        return [v.get("message", "") for v in result.get("violations", [])]
+    except Exception:
+        return []  # fail open — NAV server outage must not stop pipeline
+
 # Cost estimates in USD (approximate, 2026 pricing)
 COST_PER_ARTICLE_GENERATION = 0.001
 COST_PER_AHA_EVALUATION = 0.005
@@ -95,30 +116,37 @@ def run_pipeline(
         return _run_video_pipeline(count, dry_run, stats, start_time, _has_tqdm)
 
     from ..articles.generator import ArticleGenerator
+    from ..articles.topics import TopicSeed
     from ..training_data.exporter import DatasetExporter
 
     generator = ArticleGenerator()
     exporter = DatasetExporter(output_path=output_path, hf_repo=hf_repo)
 
     aha_scores = []
-    batches = (count + BATCH_SIZE - 1) // BATCH_SIZE  # ceiling division
-    remaining = count
+    topics = TopicSeed.random_topics(count)
 
     progress = None
     if _has_tqdm:
         progress = tqdm(total=count, desc="Generating articles", unit="article")
 
-    for _ in range(batches):
-        batch_count = min(BATCH_SIZE, remaining)
-        remaining -= batch_count
+    for topic in topics:
+        stats.total_attempted += 1
 
-        passed, failed = generator.generate_batch(batch_count)
-        stats.total_attempted += batch_count
-        stats.generation_failed += batch_count - len(passed) - len(failed)
-        stats.aha_passed += len(passed)
-        stats.aha_failed += len(failed)
+        article = generator.generate(topic)
+        if article is None:
+            stats.generation_failed += 1
+            if progress:
+                progress.update(1)
+            continue
 
-        for article in passed:
+        # NAV gate — blocks ERROR-level speciesist language violations
+        nav_violations = _nav_check(article.body)
+        if nav_violations:
+            article.aha_score.flags.extend([f"NAV: {v}" for v in nav_violations])
+            article.aha_score.passed = False
+
+        if article.aha_score.passed:
+            stats.aha_passed += 1
             aha_scores.append(article.aha_score.composite)
             if publish and not dry_run:
                 try:
@@ -126,9 +154,11 @@ def run_pipeline(
                     stats.published += 1
                 except Exception as exc:
                     print(f"  Export error: {exc}", file=sys.stderr)
+        else:
+            stats.aha_failed += 1
 
         if progress:
-            progress.update(batch_count)
+            progress.update(1)
 
     if progress:
         progress.close()
