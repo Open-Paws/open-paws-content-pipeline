@@ -1,17 +1,19 @@
 """
-Article generator with mandatory AHA evaluation gate.
+Article generator with NAV language gate and mandatory AHA evaluation gate.
 
 Uses cheapest capable model (claude-haiku) for generation, routed through
 the Open Paws API gateway for centralised cost tracking and key management.
-No article reaches the publisher without passing AHA evaluation.
 
 Generation flow:
   1. Receive topic string
   2. POST to gateway /claude/messages with advocacy-aware system prompt
-  3. Pass output to AHAEvaluator
-  4. Return GeneratedArticle with aha_score.passed indicating publishability
+  3. NAV language check (mcp-server-nav-language) — blocks on ERROR violations;
+     service errors are fail-open (NAV outage does not block the pipeline).
+  4. Pass output to AHAEvaluator
+  5. Return GeneratedArticle with aha_score.passed indicating publishability
 """
 
+import logging
 import os
 from dataclasses import dataclass
 from typing import Optional
@@ -19,7 +21,10 @@ from typing import Optional
 import httpx
 
 from .evaluator import AHAEvaluator, AHAScore
+from .nav_checker import check_article_language
 from .topics import TopicSeed
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -109,6 +114,43 @@ class ArticleGenerator:
         # Title is first line; strip any leading # characters
         lines = body.splitlines()
         title = lines[0].lstrip("#").strip() if lines else topic
+
+        # NAV language gate — runs before AHA to catch speciesist language early.
+        # Service errors are fail-open (AHA gate still runs); ERROR violations block.
+        nav_result = check_article_language(body, article_id=topic)
+        if nav_result.get("service_error"):
+            logger.warning(
+                "NAV check skipped (service error: %s) — continuing to AHA gate",
+                nav_result["service_error"],
+            )
+        elif not nav_result["is_clean"]:
+            logger.warning(
+                "Article BLOCKED — %d speciesist language violation(s) detected. "
+                "Matched: %s | Topic: %s",
+                nav_result["error_count"],
+                [
+                    v.get("matched_text", "<unknown>")
+                    for v in nav_result["violations"]
+                    if v.get("severity") == "error"
+                ],
+                topic,
+            )
+            return GeneratedArticle(
+                title=title,
+                body=body,
+                topic=topic,
+                language="en",
+                word_count=len(body.split()),
+                aha_score=AHAScore(
+                    accurate=0.0,
+                    helpful=0.0,
+                    animal_positive=0.0,
+                    composite=0.0,
+                    reasoning="Blocked by NAV language gate before AHA evaluation.",
+                    passed=False,
+                    flags=[f"NAV_BLOCKED:{nav_result['error_count']}_errors"],
+                ),
+            )
 
         aha = self.evaluator.evaluate(body, title)
 
