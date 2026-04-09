@@ -17,6 +17,7 @@ import json
 import os
 from dataclasses import dataclass, field
 
+from .client import get_client
 
 EVALUATION_PROMPT = """You are evaluating an article for the Open Paws animal advocacy platform.
 Score this article on three dimensions (0.0 to 1.0 each):
@@ -46,6 +47,18 @@ Respond with JSON only, no markdown:
 }"""
 
 
+def _strip_markdown_fences(text: str) -> str:
+    """Strip ```json ... ``` or ``` ... ``` fences that some models wrap JSON in."""
+    stripped = text.strip()
+    if stripped.startswith("```"):
+        # Remove opening fence line (```json or ```)
+        stripped = stripped.split("\n", 1)[1] if "\n" in stripped else stripped
+        # Remove closing fence
+        if stripped.endswith("```"):
+            stripped = stripped[: stripped.rfind("```")]
+    return stripped.strip()
+
+
 @dataclass
 class AHAScore:
     accurate: float
@@ -73,9 +86,7 @@ class AHAEvaluator:
 
     def __init__(self, threshold: float = 0.75):
         self.threshold = threshold
-        # Lazy import to allow module load without API key present
-        import anthropic
-        self.client = anthropic.Anthropic()
+        self.client = get_client()
         self.model = os.getenv("AHA_EVAL_MODEL", "claude-sonnet-4-6")
 
     def evaluate(self, article_text: str, title: str) -> AHAScore:
@@ -86,16 +97,16 @@ class AHAEvaluator:
         EVAL_ERROR flag set. Callers must check score.passed before publishing.
         """
         try:
-            response = self.client.messages.create(
+            response = self.client.create_message(
                 model=self.model,
-                max_tokens=500,
+                max_tokens=800,
                 system=EVALUATION_PROMPT,
                 messages=[{
                     "role": "user",
                     "content": f"Title: {title}\n\nArticle:\n{article_text}",
                 }],
             )
-            raw = response.content[0].text.strip()
+            raw = _strip_markdown_fences(response.text)
             result = json.loads(raw)
         except json.JSONDecodeError:
             return self._error_score("EVAL_PARSE_ERROR")

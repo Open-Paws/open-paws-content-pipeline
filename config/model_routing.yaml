@@ -12,7 +12,7 @@ tasks:
 
   aha_evaluation:
     model: claude-sonnet-4-6
-    max_tokens: 500
+    max_tokens: 800
     temperature: 0.1
     rationale: "Judgment task — must catch speciesist framing and factual errors"
 

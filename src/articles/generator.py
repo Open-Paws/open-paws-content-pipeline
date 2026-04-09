@@ -12,11 +12,10 @@ Generation flow:
 """
 
 import os
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Optional
 
-import anthropic
-
+from .client import get_client
 from .evaluator import AHAEvaluator, AHAScore
 from .topics import TopicSeed
 
@@ -64,7 +63,7 @@ class ArticleGenerator:
     """
 
     def __init__(self, threshold: float = 0.75):
-        self.client = anthropic.Anthropic()
+        self.client = get_client()
         self.model = os.getenv("ARTICLE_GEN_MODEL", "claude-haiku-4-5-20251001")
         self.evaluator = AHAEvaluator(threshold=threshold)
 
@@ -81,7 +80,7 @@ class ArticleGenerator:
             prompt += f"\nAngle: {angle}"
 
         try:
-            response = self.client.messages.create(
+            response = self.client.create_message(
                 model=self.model,
                 max_tokens=1500,
                 system=ARTICLE_SYSTEM_PROMPT,
@@ -90,7 +89,7 @@ class ArticleGenerator:
         except Exception:
             return None
 
-        body = response.content[0].text.strip()
+        body = response.text
         # Title is first line; strip any leading # characters
         lines = body.splitlines()
         title = lines[0].lstrip("#").strip() if lines else topic

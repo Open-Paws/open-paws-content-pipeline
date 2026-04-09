@@ -16,9 +16,9 @@ Usage:
 
 Cost estimation:
     claude-haiku-4-5: ~$0.001 per article generation (1500 tokens in+out)
-    claude-sonnet-4-6: ~$0.003 per AHA evaluation (500 tokens)
-    Total: ~$0.004 per article → ~$4 per 1000 articles
-    Monthly at 1000 articles: ~$4 (well under $100 target)
+    claude-sonnet-4-6: ~$0.005 per AHA evaluation (800 tokens)
+    Total: ~$0.006 per article → ~$6 per 1000 articles
+    Monthly at 1000 articles: ~$6 (well under $100 target)
 """
 
 import argparse
@@ -30,7 +30,7 @@ from pathlib import Path
 
 # Cost estimates in USD (approximate, 2026 pricing)
 COST_PER_ARTICLE_GENERATION = 0.001
-COST_PER_AHA_EVALUATION = 0.003
+COST_PER_AHA_EVALUATION = 0.005
 COST_PER_ARTICLE_TOTAL = COST_PER_ARTICLE_GENERATION + COST_PER_AHA_EVALUATION
 
 BATCH_SIZE = 10
