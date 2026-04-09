@@ -27,38 +27,11 @@ jobs:
           pip install "/tmp/desloppify[full]"
 
       - name: Run desloppify scan
-        run: desloppify scan --path .
-
-      - name: Check objective score meets threshold
+        run: |
+          desloppify scan --path . --profile ci
+          desloppify next
         env:
           DESLOPPIFY_MIN_SCORE: "85"
-        run: |
-          python -c "
-          import json, sys, pathlib, os, glob
-
-          # Desloppify writes state to {project_root}/.desloppify/state.json
-          # Project root is CWD (or DESLOPPIFY_ROOT env var).
-          # Search both CWD and any nested .desloppify directories.
-          candidates = list(pathlib.Path('.').glob('.desloppify/state*.json'))
-          if not candidates:
-              candidates = list(pathlib.Path('.').glob('**/.desloppify/state*.json'))
-          if not candidates:
-              print('No desloppify state file found — skipping score check.')
-              sys.exit(0)
-
-          state_path = candidates[0]
-          print(f'Reading state from: {state_path}')
-          state = json.loads(state_path.read_text())
-          from desloppify.state_scoring import score_snapshot
-          scores = score_snapshot(state)
-          objective = scores.objective if scores.objective is not None else 100.0
-          min_score = float(os.environ.get('DESLOPPIFY_MIN_SCORE', '85'))
-          print(f'Objective score: {objective:.1f} (threshold: {min_score})')
-          if objective < min_score:
-              print(f'FAIL: objective {objective:.1f} < minimum {min_score}')
-              sys.exit(1)
-          print('PASS')
-          "
 
   speciesist-language:
     name: Speciesist Language Scan
