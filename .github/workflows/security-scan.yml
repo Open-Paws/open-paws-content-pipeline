@@ -45,7 +45,7 @@ jobs:
         env:
           PYTHONPATH: /tmp/opaws-ai-security
         run: |
-          python -m src.scanner.pipeline \
+          paws-security \
             --target . \
             --ci \
             --fail-on ${{ inputs.fail_on || 'HIGH' }}
