@@ -98,3 +98,31 @@ The AHA `animal_positive` score catches these automatically, but verify manually
 4. Add dataclaw Claude Code conversation → dataset export
 5. Build distribution automation: schedule posts across platforms
 6. Add 15-agent campaign ad optimization (marketing repo patterns)
+
+## Every Session
+
+Read the strategy repo for current priorities before acting:
+
+```bash
+gh api repos/Open-Paws/open-paws-strategy/contents/priorities.md --jq '.content' | base64 -d
+gh api repos/Open-Paws/open-paws-strategy/contents/closed-decisions.md --jq '.content' | base64 -d
+```
+
+## Quality Gates
+
+Run before every PR:
+
+```bash
+pip install "git+https://github.com/Open-Paws/desloppify.git#egg=desloppify[full]"
+desloppify scan --path .
+desloppify next
+```
+
+Minimum passing score: ≥85
+
+Speciesist language scan:
+```bash
+semgrep --config semgrep-no-animal-violence.yaml .
+```
+
+All PRs must pass CI before merge.
