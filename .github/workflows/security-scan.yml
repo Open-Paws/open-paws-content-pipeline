@@ -36,6 +36,10 @@ jobs:
           python-version: '3.11'
 
       - name: Install open-paws-ai-security
+        env:
+          GIT_CONFIG_COUNT: "1"
+          GIT_CONFIG_KEY_0: "submodule.recurse"
+          GIT_CONFIG_VALUE_0: "false"
         run: |
           pip install git+https://github.com/Open-Paws/open-paws-ai-security.git
 
