@@ -74,6 +74,7 @@ def check_article_language(
                     parse_exc,
                 )
                 return _service_error_result(f"parse error: {parse_exc}")
+
             errors = [v for v in violations if v.get("severity") == "error"]
             warnings = [v for v in violations if v.get("severity") == "warning"]
 
