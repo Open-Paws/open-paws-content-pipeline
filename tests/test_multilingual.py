@@ -9,9 +9,8 @@ Domain rules encoded:
 - translate_to_all returns only successful translations
 """
 
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 
-import pytest
 
 from src.multilingual.translator import SUPPORTED_LANGUAGES, TranslatedArticle, Translator
 

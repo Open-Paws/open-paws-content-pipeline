@@ -12,8 +12,9 @@ venv/
 data/
 output/
 
-# desloppify local state
+# desloppify local state (config.json tracked, state files excluded)
 .desloppify/
+!.desloppify/config.json
 
 # Editor
 .vscode/
