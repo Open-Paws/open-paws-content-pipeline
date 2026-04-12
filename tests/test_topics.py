@@ -10,9 +10,7 @@ Domain rules encoded:
 """
 
 from pathlib import Path
-from unittest.mock import patch
 
-import pytest
 import yaml
 
 from src.articles.topics import (

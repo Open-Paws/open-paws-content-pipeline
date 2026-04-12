@@ -11,11 +11,10 @@ Domain rules encoded:
 
 from unittest.mock import MagicMock, patch
 
-import pytest
 
 from src.articles.client import MessageResponse
 from src.articles.evaluator import AHAScore
-from src.articles.generator import ArticleGenerator, GeneratedArticle
+from src.articles.generator import ArticleGenerator
 
 
 # ---------------------------------------------------------------------------

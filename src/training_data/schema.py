@@ -13,7 +13,7 @@ The schema is intentionally flat (no nested objects) for maximum
 compatibility with HuggingFace datasets loading patterns.
 """
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from datetime import datetime, timezone
 
 

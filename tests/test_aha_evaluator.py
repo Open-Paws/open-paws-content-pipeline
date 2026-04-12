@@ -6,11 +6,10 @@ Every test here must fail if the behavior it covers breaks.
 """
 
 import json
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 
-import pytest
 
-from src.articles.evaluator import AHAEvaluator, AHAScore, _strip_markdown_fences
+from src.articles.evaluator import AHAEvaluator, _strip_markdown_fences
 
 
 # ---------------------------------------------------------------------------

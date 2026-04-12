@@ -15,7 +15,6 @@ Test coverage:
 from unittest.mock import MagicMock, patch
 
 import httpx
-import pytest
 
 from src.articles.nav_checker import (
     _MAX_CONTENT_CHARS,
