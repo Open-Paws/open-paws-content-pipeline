@@ -10,11 +10,10 @@ Domain rules encoded:
 
 from unittest.mock import MagicMock
 
-import pytest
 
 from src.articles.evaluator import AHAScore
 from src.articles.generator import GeneratedArticle
-from src.articles.publisher import ArticlePublisher, PublishResult
+from src.articles.publisher import ArticlePublisher
 
 
 # ---------------------------------------------------------------------------

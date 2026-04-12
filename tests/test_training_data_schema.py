@@ -13,7 +13,6 @@ import json
 import tempfile
 from pathlib import Path
 
-import pytest
 
 from src.articles.evaluator import AHAScore
 from src.articles.generator import GeneratedArticle
