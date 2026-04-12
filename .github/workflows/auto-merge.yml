@@ -30,11 +30,6 @@ on:
     types: [opened, synchronize, reopened, labeled, unlabeled]
   pull_request_review:
     types: [submitted]
-  check_suite:
-    types: [completed]
-  workflow_run:
-    workflows: ["*"]
-    types: [completed]
 
 permissions:
   pull-requests: write
@@ -49,8 +44,10 @@ jobs:
   gate-check:
     name: Auto-Merge Gate Check
     runs-on: ubuntu-latest
-    # Skip draft PRs entirely
-    if: github.event.pull_request.draft == false
+    # Only run on PR events — check_suite/workflow_run have no PR context and would 404
+    if: >-
+      (github.event_name == 'pull_request' || github.event_name == 'pull_request_review') &&
+      github.event.pull_request.draft == false
 
     outputs:
       gates_passed: ${{ steps.evaluate.outputs.gates_passed }}
@@ -331,6 +328,7 @@ jobs:
     runs-on: ubuntu-latest
     if: |
       needs.gate-check.outputs.has_human_gate != 'true' &&
+      (github.event_name == 'pull_request' || github.event_name == 'pull_request_review') &&
       github.event.pull_request.draft == false
 
     steps:
