@@ -310,12 +310,19 @@ jobs:
           else
             echo "gates_passed=false" >> "$GITHUB_OUTPUT"
             # Build newline-separated failure summary for PR comment
-            SUMMARY=$(printf "- %s\n" "${FAILURES[@]}")
+            # Use echo in a loop instead of printf to avoid "invalid option" crash
+            # when failure strings begin with a hyphen or other special character
+            SUMMARY=""
+            for item in "${FAILURES[@]}"; do
+              SUMMARY+="- ${item}"$'\n'
+            done
             # Escape for GitHub Actions output (replace newlines with literal \n)
             SUMMARY_ESCAPED="${SUMMARY//$'\n'/\\n}"
             echo "failure_summary=${SUMMARY_ESCAPED}" >> "$GITHUB_OUTPUT"
             echo "Gate failures:"
-            printf "  %s\n" "${FAILURES[@]}"
+            for item in "${FAILURES[@]}"; do
+              echo "  ${item}"
+            done
           fi
 
   # ─────────────────────────────────────────────────────────────────
